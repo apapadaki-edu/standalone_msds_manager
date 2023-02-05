@@ -1,0 +1,43 @@
+name,GHS,SCL,PBT,ADR_Opt,LModDate,LCheckDate
+"sub1,H302 Acute Tox. 4 (Oral):H314 Skin Corr. 1C:H318 Eye Dam. 1:H373 STOT Rep. 2 (Oral):H400 Aquatic Acute 1:H410 Aquatic Chronic 1,::::M = 10:M = 1,-,-,5/4/2019,9/2/2019"
+"sub2,H332 Acute Tox. 4 (Inhal.):H315 Skin Irrit. 2:H319 Eye Irrit. 2:H335 STOT SE 3 ,-,-,UN9003,4/29/2019,9/21/2019"
+sub3,H302 Acute Tox. 4:H304 Acute Tox 1:H314 Skin Corr. 1B:H318 Eye Dam. 1:H335 STOT SE 3:H373 STOT RE 2 (gastro -int):H400 Aquatic Aqute 1:H410 Acuatic Chronic 1,::::::M=10:M=10,-,-,-,9/21/2019
+sub4,H361 Repr.2 (Oral),H361 >= 0 - <= 4,-,-,8/29/2019,9/4/2019
+"sub5,H319 Eye Irrit. 2:H315 Skin Irrit. 2:H412 Aquatic Chronic 3,-,-,-,6/28/2019,9/19/2019
+"sub6,H315 Skin Irrit. 2:H318 Eye Dam. 1:H411 Aquatic Chronic 2,:H318 > 10%:,-,UN3082,8/1/2019,9/2/2019
+sub7,H318 Eye Dam. 1:H411 Aquatic Chronic 2,H318>= 50%:,-,UN3082,8/6/2019,9/2/2019
+sub8,H317 Skin Sens. 1B,H317 > 15%,-,-,7/14/2019,9/4/2019
+"sub9,H413 Aquatic Chronic 4,-,-,-,7/14/2019,9/2/2019
+sub10,H317 Skin Sens. 1B:H400 Aquatic Aqute 1:H410 Aquatic Chronic 1,H317 >= 14.2%::,-,-,4/26/2019,-
+sub11,H315 Skin Irrit 2:H318 Eye Dam 1:H411 Aquatic Chronic 2,H315 > 15%:H318 >= 3%:,-,UN3082,8/6/2019,9/3/2019
+sub12,H315 Skin Irrit, 2:H318 Eye Dam. 1,-,-,-,6/2/2018
+"sub13,H413 Aquatic Chronic 4,-,-,-,-,9/21/2019
+"sub14,H413 Aquatic Chronic 4,-,-,-,-,9/20/2019
+"sub15,H317 Skin Sens. 1B:H412 Aquatic Chronic 3,H317 >= 46%:,-,UN3082,7/14/2019,9/2/2019
+sub16,H317 Skin Sens. 1B,-,-,-,8/22/2019,9/5/2019
+sub17,H314 Skin Corr. 1B:H318 Eye Dam. 1:H412 Aquatic Chronic 3,-,-,UN2819,4/8/2019,9/21/2019
+"sub18,H315 Skin Irrit. 2:H318 Eye Dam. 1:H411 Aquatic Chronic 2,H315 >= 6.25:H318 > 12.5%:,-,-,-,-
+sub19,H315 Skin Irrit, 2:H318 Eye Dam. 1:H411 Aquatic Chronic 2,-,-,-,8/29/2019
+sub20,H412 Aquatic Chronic 3,-,-,-,5/4/2019,9/2/2019
+sub21,H412 Aquatic Chronic 3,-,-,-,5/4/2019,9/21/2019
+"sub22,H315 Skin Irrit. 2:H318 Eye Dam. 1:H411 Aquatic Chronic 2,H315 >= 6.25:H318 > 12.5%:,-,-,-,-
+"sub23,H314 Skin Corr. 1C:H318 Eye Dam. 1:H360F Repr. 1B:H400 Aquatic Aqute 1:H410 Aquatic Chronic 1,:::M =10:M=10,-,UN3082,5/9/2019,9/2/2019"
+sub24,H312 Acute Tox. 4:H314 Skin Corr. 1B:H400 Aquatic Acute 1:H410 Aquatic Chronic 1,:::M=10,-,UN1760,2/25/2019,9/5/2019
+sub25,H315 Skin Irrit. 2:H317 Skin Sens. 1:H412 Aquatic Chronic 3,-,-,-,5/14/2019,9/22/2019
+sub26,H317 Skin Sens. 1B,"H317 >= 9.4%",-,-,5/4/2019,-
+"sub27,H317 Skin Sens. 1B:H412 Aquatic Chronic 3,-,-,-,4/26/2019,9/19/2019"
+sub28,H302 Acute Tox. 4:H315 Skin Irrit. 2:H319 Eye Irrit. 2:H411 Aquati Chronic 2,-,Yes,UN3082,5/27/2019,9/20/2019
+sub29,H315 Skin Irrit. 2:H319 Eye Irrit. 2:H411 Aquatic Chronic 2 ,-,-,-,7/14/2019,9/22/2019
+"sub30,H315 Skin Irrit. 2:H318 Eye Dam. 1:H400 Aquatic Acute 1:H412 Aquatic Chronic 3,::M=1:,-,-,-,9/5/2019"
+sub31,H314 Skin Corr. 1:H318 Eye Dam. 1:H360F Repr. 1B:H400 Aquatic Acute 1:H410 Aquatic Chronic 1,:::M=10:M=10,-,-,-,9/5/2019
+sub32,H302 Acute Tox. 4 (Oral):H314 Skin Corr. 1C:H318 Eye Dam. 1:H410 Aquatic Chronic 1:H400 Aquatic Acute 1,:::M=1:M=10,-,UN2735,8/23/2019,9/19/2019
+sub34,H302 Acute Tox. 4:H314 Skin Corr. 1B:H335 STOT SE 3 (Inhal.):H373 STOT RE 2 (Oral):H304 Asp. Tox. 1:H400 Aquatic Acute 1:H410 Aquatic Chronic 1,:::::M=10:M=10,-,UN2735,8/6/2019,9/5/2019
+"sub35,H411 Aquatic Chronic 2,-,-,-,-,9/5/2019
+sub36,H302 Acute Tox. 4 (Oral):H311 Acute Tox. 3 (Dermal):H330 Acute Tox. 2 (Inhal.):H314 Skin Corr. 1B:H317 Skin Sens. 1A:H400 Aquatic Acute 1:H410 Aquatic Chronic 1,-,-,UN2922,7/14/2019,9/21/2019
+"sub37,H360  Repr. 1B:H413 Aquatic Chronic 4,-,-,-,5/28/2019,9/22/2019
+sub38,H411 Aquatic Chronic 2,-,-,-,4/26/2019,9/5/2019
+"sub39,H302 Acute Tox. 4 (Oral):H318 Eye Dam. 1:H317 Skin Sens. 1B:H411 Aquatic Chronic 2,:H318 > 50%::,-,UN1993,6/27/2019,9/2/2019
+sub40,H317 Skin Sens. 1B:H373 STOT RE 2 (liver),-,-,UN3145,2/14/2019,9/5/2019
+sub41,H317 Skin Sens. 1B,-,-,-,4/26/2019,9/19/2019
+"sub42,H400 Aquatic Acute 1:H411 Aquatic chronic 2:H315 Skin Irrit. 2:H317 Skin Sens. 1B,M =10: M=1::,-,UN3082,8/12/2019,9/2/2019
+"sub43,H315 Skin Irrit. 2:H361 Repr.2:H413 Aquatic Chronic 4,-,-,-,2/5/2019,9/2/2019

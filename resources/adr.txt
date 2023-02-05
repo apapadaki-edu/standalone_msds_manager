@@ -1,0 +1,17 @@
+Class,Message,Pictogram
+1,Explosives,ADR_1
+2.1,Flammable gases,ADR_2.1
+2.2,Non-toxic and non-flammable gases,ADR_2.2
+2.3,Poison gasses,ADR_2.3
+3,Flammable liquids,ADR_3
+4.1,Flammable solids,ADR_4.1
+4.2,Spontaneously combustibles,ADR_4.2
+4.3,Dangerous when wet,ADR_4.3
+5.1,Oxidizers,ADR_5.1
+5.2,Organic peroxides,ADR_5.2
+6.1,Poison,ADR_6.1
+6.2,Infectious substances,ADR_6.2
+7,Radioactive,ADR_7
+8,Corrosive,ADR_8
+9,Miscellaneous dangerous substances,ADR_9
+9A,Lithium ion batteries,ADR_9A

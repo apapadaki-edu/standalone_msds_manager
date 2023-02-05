@@ -1,0 +1,15 @@
+create table company(id serial8 primary key,name text, email text,phone text,address text,zip integer,city text,country text);
+create table substance(id serial8 primary key,ec text unique,cas text unique,name text,reach text,un_number text,pbt bool,last_mod_date date,last_check_date date,comment text);
+create table ghs_pic(code text primary key,pic bytea);
+create table p_statement(code text primary key,message text);
+create table additive(id serial8 primary key,name text unique,last_update_date timestamp,price float8,msds bytea,comment text);
+create table base(id serial8 primary key,code text,vi_40 float8,vi_100 float8,qqsp_gr float8,price float8);
+create table ghs(id serial8 primary key,code text,hazard_statement text,hazard_class text,category text,pictogram_id text, signal_word text);
+create table product(id serial8 primary key,name text,grade text,code text unique,category text,viscosity float8,company_id bigint not null,comment text,foreign key(company_id) references company(id) on delete cascade on update cascade);
+create table msds(msds_no serial8 not null,product_id bigint not null,doc text,last_check_date date,foreign key(product_id) references product(id),primary key(msds_no,product_id));
+create table standard(product_id bigint not null,name text not null,foreign key(product_id) references product(id),primary key(product_id,name));
+create table contains_base(product_id bigint,base_id bigint, quantity float8,foreign key(product_id) references product(id) on delete cascade on update cascade,foreign key(base_id) references base(id) on delete cascade on update cascade,primary key(product_id,base_id));
+create table contains_additive(product_id bigint,additive_id bigint, quantity float8,foreign key(product_id) references product(id) on delete cascade on update cascade,foreign key(additive_id) references additive(id) on delete cascade on update cascade,primary key(product_id,additive_id));
+create table contains_substance(additive_id bigint,substance_id bigint, quantity float8,foreign key(additive_id) references additive(id) on delete cascade on update cascade,foreign key(substance_id) references substance(id) on delete cascade on update cascade,primary key(additive_id,substance_id));
+create table has_pcode(ghs_id bigint not null,p_code text not null,foreign key(ghs_id) references ghs(id) on delete cascade on update cascade,foreign key(p_code) references p_statement(code) on delete cascade on update cascade,primary key(ghs_id,p_code));
+create table classify(substance_id bigint not null, ghs_id bigint not null,scl float8,primary key(substance_id,ghs_id),foreign key(substance_id) references substance(id) on delete cascade on update cascade,foreign key(ghs_id) references ghs(id) on delete cascade on update cascade);
