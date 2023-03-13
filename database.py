@@ -4,7 +4,7 @@ class Database:
     def __init__(self, name):
         self._conn = psycopg2.connect(database=name,
                                 user='postgres',
-                                password='postgres',
+                                password='newlf2080',
                                 host='localhost',
                                 port='5432')
         self._cursor = self._conn.cursor()

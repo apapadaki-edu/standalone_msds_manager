@@ -1,6 +1,9 @@
 from data import Data
+import numpy as np
 import psycopg2
-
+import subprocess
+import sys
+from psycopg2.extensions import AsIs
 
 data = Data(additives='resources/additives.csv',
             substances='resources/substancies.csv',
@@ -16,7 +19,6 @@ def insert_companies(companies_dict):
     sql = """INSERT INTO company (name,email,phone,address,zip,city,country)
     VALUES(%(name)s,%(email)s,%(phone)s,%(address)s,%(zip)s,%(city)s,%(country)s)
     RETURNING id"""
-
     companies = tuple(companies_dict.values())
     try:
         conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
@@ -24,7 +26,7 @@ def insert_companies(companies_dict):
         c.executemany(sql,companies)
         conn.commit() 
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -44,7 +46,7 @@ def insert_products(products_dict):
         c.executemany(sql,products)
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -64,7 +66,7 @@ def insert_additives(additives_dict):
         c.executemany(sql,additives)
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -84,7 +86,7 @@ def insert_ghs(ghs_dict):
         c.executemany(sql,ghs)
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL" )
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -103,7 +105,7 @@ def insert_bases(bases_dict):
         c.executemany(sql,bases)
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -131,7 +133,7 @@ def insert_substances(subs_dict):
         c.executemany(sql,substances)
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -149,7 +151,7 @@ def insert_standards(standard_set):
         c.executemany(sql,list(standard_set))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -159,16 +161,16 @@ def insert_standards(standard_set):
 
 msds = data.msds()
 def insert_msds(msds_dict):
-    sql = """INSERT INTO msds (product_id,last_check_date,doc)
-    VALUES(%(product_id)s,%(last_check_date)s,%(doc_path)s)"""
+    sql = """INSERT INTO msds (product_id,last_check_date)
+    VALUES(%(product_id)s,%(last_check_date)s)"""
     msds = tuple(msds_dict.values())
     try:
         conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
         c = conn.cursor()
-        c.executemany(sql, msds)
+        c.executemany(sql,msds)
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -189,7 +191,7 @@ def insert_p_statements(p_stmt_dict):
         c.executemany(sql,list(p_statements))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -207,7 +209,7 @@ def insert_classification(classifications):
         c.executemany(sql,list(classifications))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -225,7 +227,7 @@ def insert_pcodes(pcodes_set):
         c.executemany(sql,list(pcodes_set))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -247,7 +249,7 @@ def insert_c_base(c_base_dict):
         c.executemany(sql,list(c_bases))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -268,7 +270,7 @@ def insert_c_additive(c_add_dict):
         c.executemany(sql,list(c_additives))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -291,7 +293,7 @@ def insert_c_substance(c_sub_dict):
         c.executemany(sql,list(c_substances))
         conn.commit()
     except:
-        print("Error while connecting to PostgreSQL")
+        print("Error while connecting to PostgreSQL", err)
         
     finally:
         if (conn):
@@ -314,4 +316,7 @@ if __name__=='__main__':
     insert_c_base(c_base)
     insert_c_additive(c_additive)
     insert_c_substance(c_substance)
-
+    # delete the file
+    
+    subprocess.Popen("python3 -c \"import os, time; time.sleep(1); os.remove('{}');\"".format(sys.argv[0]),shell=True)
+    sys.exit(0)
