@@ -7,7 +7,7 @@ from database import Database
 # login as default user and create the database for the api
 
 conn = psycopg2.connect(user="postgres", 	
-                            password="newlf2080",
+                            password="12345678",
                             host="localhost",
                             port="5432")
 
