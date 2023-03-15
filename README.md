@@ -1,7 +1,9 @@
 # standalone_msds_manager
 A basic CRUD application using python ( for both db interaction &amp; gui) and postgresql
 <br><br>
+
 ![flowchart](/doc/msds_project_flow.png)
+
 <br><br>
 **doc** folder contains some documentation files and an er diagram that explains the database's architecture.
 
