@@ -19,7 +19,7 @@ def insert_companies(companies_dict):
 
     companies = tuple(companies_dict.values())
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,companies)
         conn.commit() 
@@ -39,7 +39,7 @@ def insert_products(products_dict):
     RETURNING id"""
     products = tuple(products_dict.values())
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,products)
         conn.commit()
@@ -59,7 +59,7 @@ def insert_additives(additives_dict):
     RETURNING id"""
     additives = tuple(additives_dict.values())
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,additives)
         conn.commit()
@@ -79,7 +79,7 @@ def insert_ghs(ghs_dict):
     RETURNING id"""
     ghs = tuple(ghs_dict.values())
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,ghs)
         conn.commit()
@@ -98,7 +98,7 @@ def insert_bases(bases_dict):
     VALUES(%(code)s,%(vi_40)s,%(vi_100)s,%(qqsp_gr)s,%(price)s)"""
     bases = tuple(bases_dict.values())
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,bases)
         conn.commit()
@@ -126,7 +126,7 @@ def insert_substances(subs_dict):
     substances = tuple(subs_dict.values())
     
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,substances)
         conn.commit()
@@ -144,7 +144,7 @@ def insert_standards(standard_set):
     sql = """INSERT INTO standard (product_id,name)
     VALUES(%s,%s)"""
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(standard_set))
         conn.commit()
@@ -163,7 +163,7 @@ def insert_msds(msds_dict):
     VALUES(%(product_id)s,%(last_check_date)s,%(doc_path)s)"""
     msds = tuple(msds_dict.values())
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql, msds)
         conn.commit()
@@ -184,7 +184,7 @@ def insert_p_statements(p_stmt_dict):
     for k,v in p_stmt_dict.items():
         p_statements.add((k,v))
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(p_statements))
         conn.commit()
@@ -202,7 +202,7 @@ def insert_classification(classifications):
     sql = """INSERT INTO classify (substance_id,ghs_id,scl)
     VALUES(%s,%s,%s)"""
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(classifications))
         conn.commit()
@@ -220,7 +220,7 @@ def insert_pcodes(pcodes_set):
     sql = """INSERT INTO has_pcode (ghs_id,p_code)
     VALUES(%s,%s)"""
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(pcodes_set))
         conn.commit()
@@ -242,7 +242,7 @@ def insert_c_base(c_base_dict):
         c_bases.add((k[0], k[1], c_base_dict.get(k)))
 
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(c_bases))
         conn.commit()
@@ -263,7 +263,7 @@ def insert_c_additive(c_add_dict):
         c_additives.add((k[0], k[1], c_add_dict.get(k)))
 
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(c_additives))
         conn.commit()
@@ -286,7 +286,7 @@ def insert_c_substance(c_sub_dict):
         c_substances.add((k[0], k[1], c_sub_dict.get(k)))
 
     try:
-        conn = psycopg2.connect(database= "msds", user="postgres",password="newlf2080",host="127.0.0.1",port="5432")
+        conn = psycopg2.connect(database= "msds", user="postgres",password="12345678",host="127.0.0.1",port="5432")
         c = conn.cursor()
         c.executemany(sql,list(c_substances))
         conn.commit()
