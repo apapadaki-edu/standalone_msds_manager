@@ -15,4 +15,4 @@ This project is currently in the process of being rebuilt.
 
 
 <br><br>
-I would be extremely grateful for any feedback or tips on how to improve or change these projects. It would help immensely my development as a programmer. 
+I would be extremely grateful for any feedback or tips on how to improve or change this project. It would help immensely my development as a programmer. 
