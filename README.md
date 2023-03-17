@@ -10,7 +10,7 @@ A basic CRUD application using python ( for both db interaction &amp; gui) and p
 ![flowchart](/doc/msds_project_flow.png)
 <br><br>
 
-**doc** folder contains some documentation files and an er diagram that explains the database's architecture.
+**doc** folder contains some documentation files.
 
 <br><br>
 
