@@ -1,10 +1,15 @@
 # MSDS Manager
-A basic CRUD application using python ( for both db interaction &amp; gui) and postgresql (for the purposes of the 
+A basic CRUD application using python ( for both db interaction &amp; gui) and postgresql (for the purposes of  Database Systems' course)
 <br><br>
 
+### Database design
+![database design](/doc/er.png)
+<br><br>
+
+### Files and order of execution
 ![flowchart](/doc/msds_project_flow.png)
-
 <br><br>
+
 **doc** folder contains some documentation files and an er diagram that explains the database's architecture.
 
 <br><br>
