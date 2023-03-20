@@ -6,7 +6,7 @@ create table additive(id serial8 primary key,name text unique,last_update_date t
 create table base(id serial8 primary key,code text,vi_40 float8,vi_100 float8,qqsp_gr float8,price float8);
 create table ghs(id serial8 primary key,code text,hazard_statement text,hazard_class text,category text,pictogram_id text, signal_word text);
 create table product(id serial8 primary key,name text,grade text,code text unique,category text,viscosity float8,company_id bigint not null,comment text,foreign key(company_id) references company(id) on delete cascade on update cascade);
-create table msds(msds_no serial8 not null,product_id bigint not null,doc text,last_check_date date,foreign key(product_id) references product(id),primary key(msds_no,product_id));
+create table msds(msds_no serial8 not null,product_id bigint not null,doc text,last_check_date date,foreign key(product_id) references product(id) on delete cascade on update cascade,primary key(msds_no,product_id));
 create table standard(product_id bigint not null,name text not null,foreign key(product_id) references product(id),primary key(product_id,name));
 create table contains_base(product_id bigint,base_id bigint, quantity float8,foreign key(product_id) references product(id) on delete cascade on update cascade,foreign key(base_id) references base(id) on delete cascade on update cascade,primary key(product_id,base_id));
 create table contains_additive(product_id bigint,additive_id bigint, quantity float8,foreign key(product_id) references product(id) on delete cascade on update cascade,foreign key(additive_id) references additive(id) on delete cascade on update cascade,primary key(product_id,additive_id));
