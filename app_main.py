@@ -5,7 +5,7 @@ from tkinter import filedialog as fd
 from DBInteract import DBInteraction
 import classification as cl
 from PIL import ImageTk, Image
-
+from pprint import pformat
 class Page(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
@@ -119,20 +119,14 @@ class Page1(Page):
         Exit.grid(row=0, column=5, padx=10, sticky='e')
 
 
-        text = '''An app that helps with the classification of mechanical oils and the msds handling.
-(Script for automatic classification on the works, along other things.
-
-Top window bottons navigate the app's pages.\nDates are entered in format:'%Y-%M-%D'.\nAll entries are case sensitive.
-In General: Exit Buttons quit the app\nClear Buttons clear entry boxes.\n
-In Up to Task are displayed products older than 1 and a half years.Or you can specify the date on Date Due.\nDisplay selects all products or additives in db.
-Classification Tab:
-Search desplays all additives in the product.
-Display gets additives classification, if the additive is given.
-Classify displays the products classification.
-
-ALL DATA ABOUT THE CONSISTENCY OF PRODUCTS, ADDITIVES AND SUBSTANCES ARE RANDOM
-                  
-                  '''
+        text = '''An app that helps with the the management of material safety data sheets and the classification of mechanical oils.\n
+Top window buttons navigate the app's pages.\n
+Dates are entered in format:'%Y-%M-%D'.\n
+All entries are case sensitive.\n
+Exit Buttons quit the app.\n
+Clear Buttons clear entry boxes.\n
+In the section on the right, there are displayed products older than 1 and a half years. An alternative is to specify a date in the Date Due input field.\n
+'''
 
         # ==================================== SCROLLBARS - TREEVIEWS =====================================
 
@@ -234,14 +228,14 @@ class Page2(Page):
 
         def add_data():
             global new_pr_date
+            global filename
             new_pr_date = date.get()
             clear_data_box()
             if len(code.get()) != 0:
                 companies = dbi.select_all_companies()
                 if len(company.get()) != 0 and (company.get() in companies):
-
                     product = dbi.add_product(name.get(), grade.get(), code.get(),
-                                              category.get(), viscosity.get(), company.get(),
+                                              category.get(), viscosity.get(), company.get(), comment.get(),
                                               filename if filename is not None else '')
                     if product is not None:
                         errmessage.configure(text='')
@@ -302,8 +296,7 @@ class Page2(Page):
             cur_record = product_list.focus()
             p = product_list.item(cur_record).get('values')
             if p:
-                pr = dbi.update_product(name.get(), grade.get(), code.get(),
-                            category.get(), viscosity.get(), company.get(),p[0])
+                pr = dbi.update_product(name.get(), grade.get(), code.get(), category.get(), viscosity.get(), company.get(), comment.get(), p[0])
                 clear_data_box()
                 product_list.insert(parent='', index='end', iid=0, text='', values=
                 (pr[0], pr[1], pr[2], pr[3], pr[4], pr[5], pr[6], pr[7]))
@@ -559,6 +552,8 @@ class Page3(Page):
                                   }})
             name.focus_set()
             clear_data()
+            messagebox.showinfo("Added Successfully",
+                                pformat(dict_adds.get(n), indent=4, sort_dicts=False, ))
             errmessage.configure(text=dict_adds.get(n), fg="Green")
 
 
@@ -568,6 +563,7 @@ class Page3(Page):
             all_substances = set()
             additive = list()
             concentrations = list()
+             #geaeg dagea
             for k, v in dict_adds.items():
                 additive.append(k)
                 concentrations.append(v.get('concentration'))
@@ -582,25 +578,23 @@ class Page3(Page):
             # add additive
             a_added = dbi.add_additive(list(all_additives))
             if a_added:
-                message = tk.Label(self, text=a_added)
-                message.pack()
-                root.after(2000, message.destroy)
+                messagebox.showinfo("Added Successfully",
+                    pformat(a_added, indent=4, sort_dicts=False, ))
 
             # add additive substances
             s_added = dbi.add_additive_substances(tuple(all_substances))
             if s_added:
-                message = tk.Label(self, text=s_added)
-                message.pack()
-                root.after(2000, message.destroy)
+                messagebox.showinfo("Added Successfully",
+                    pformat(s_added, indent=4, sort_dicts=False, ))
 
             # add product additives
             additive_names = tuple(dict_adds.keys())
+            print(dict_adds)
             if len(pr_code.get())!=0:
                 pa_added = dbi.add_product_additives(pr_code.get(), additive_names, tuple(concentrations))
                 if pa_added:
-                    message = tk.Label(self, text=pa_added)
-                    message.pack()
-                    root.after(2000, message.destroy)
+                    messagebox.showinfo("Added Successfully",
+                        pformat(pa_added, indent=4, sort_dicts=False, ))
             dict_adds.clear()
 
         def display_all_additives():
@@ -608,7 +602,7 @@ class Page3(Page):
             countera = 0
             for p in dbi.view_additive():
                 additive_list.insert(parent='', index='end', iid=countera, text='', values=
-                (p[0], p[1], p[2], p[3], p[4], p[5]))
+                (p[0], p[1], p[2], p[3], p[4], p[5], "no product selected"))
                 countera += 1
 
         def display_additive_substances():
@@ -649,13 +643,25 @@ class Page3(Page):
             clear_additives_box()
             display_all_additives()
 
-        def search_data():
+        def search_additive():
             clear_additives_box()
+            result_adds = dbi.search_additive(name=name.get(), last_update_date=date.get() if date.get() != 'YYYY-MM-DD' else '', price=price.get())
+
             counter = 0
-            for a in dbi.search_additive(name.get(), date.get(), price.get(), comment.get()):
+            for a in result_adds:
                 additive_list.insert(parent='', index='end', iid=counter, text='', values=
                 (a[0], a[1], a[2], a[3], a[4], a[5]))
                 counter += 1
+
+        def search_by_product():
+            if len(pr_code.get()) != 0:
+                clear_additives_box()
+                adds = dbi.search_additives_by_product(pr_code.get())
+                countera = 0
+                for a in adds:
+                    additive_list.insert(parent='', index='end', iid=countera, text='', values=
+                    (a[0], a[1], a[2], a[3], a[4], a[5], a[6]))
+                    countera += 1
 
         def update_data():
             cur_record = additive_list.focus()
@@ -663,7 +669,7 @@ class Page3(Page):
             if a:
                 add = dbi.update_additive(date.get(), price.get(), comment.get(), name.get())
                 errmessage.configure(text=add, fg='green')
-                display_all_additives
+                display_all_additives()
 
         # ======================================= FRAMES ========================================
 
@@ -754,12 +760,12 @@ class Page3(Page):
         errmessage.grid(row=2, column=0, padx=3, columnspan=2, pady=2, sticky='ws')
 
         additive_list = ttk.Treeview(pmain_title, height=15, yscrollcommand=scrollbar1.set)
-        additive_list['columns'] = ("ID", "Name", "Last Updated", "Price", "Msds", "Comment")
+        additive_list['columns'] = ("ID", "Name", "Last Updated", "Price", "Msds", "Comment", "Concentration")
         # Column Format
         additive_list.column('#0', width=0, stretch=tk.NO)
         additive_list.heading('#0', anchor=W)
         for i in additive_list['columns']:
-            additive_list.column(i, anchor=W, width=140)
+            additive_list.column(i, anchor=W, width=130)
             additive_list.heading(i, text=i, anchor=W)
         additive_list.grid(row=0, column=0, padx=3)
         additive_list.bind('<ButtonRelease-1>', additive_record)
@@ -773,7 +779,7 @@ class Page3(Page):
         additive_substance_list.column('#0', width=0, stretch=tk.NO)
         additive_substance_list.heading('#0', anchor=W)
         for i in additive_substance_list['columns']:
-            additive_substance_list.column(i, anchor=W, width=210)
+            additive_substance_list.column(i, anchor=W, width=227)
             additive_substance_list.heading(i, text=i, anchor=W)
         additive_substance_list.grid(row=1, column=0, padx=3, pady=3)
         additive_substance_list.bind('<ButtonRelease-1>', additive_substance_record)
@@ -807,17 +813,21 @@ class Page3(Page):
                            relief=tk.RIDGE, command=delete_data)
         delete.grid(row=0, column=5, padx=10)
 
+        search_add = tk.Button(button_pmain, text='Search Additives', font=('calibre', 12), height=1, width=18, bd=2,
+                           relief=tk.RIDGE, command=search_additive)
+        search_add.grid(row=0, column=6, padx=10)
+
         search = tk.Button(button_pmain, text='Search By Product', font=('calibre', 12), height=1, width=18, bd=2,
-                           relief=tk.RIDGE, command=search_data)
-        search.grid(row=0, column=6, padx=10)
+                           relief=tk.RIDGE, command=search_by_product)
+        search.grid(row=0, column=7, padx=10)
 
         clear = tk.Button(button_pmain, text='Clear', font=('calibre', 12), height=1, width=10, bd=2,
                           relief=tk.RIDGE, command=clear_data)
-        clear.grid(row=0, column=7, padx=10)
+        clear.grid(row=0, column=8, padx=10)
 
         Exit = tk.Button(button_pmain, text='Exit', font=('calibre', 12), height=1, width=10, bd=2,
                          relief=tk.RIDGE, command=lambda: Page.exit(self))
-        Exit.grid(row=0, column=8, padx=10)
+        Exit.grid(row=0, column=9, padx=10)
 # AB-BB-C-33
 
 class Page4(Page):
