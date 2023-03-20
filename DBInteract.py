@@ -17,12 +17,10 @@ class DBInteraction:
     def add_product(*args):
         args_msds = (args[2], args[-1] if args[-1] != '' else None, (datetime.datetime.now()).strftime('%Y/%m/%d'))
         args_product = args[:-1]
-        print(args_product)
-        print(args_msds)
-        sql = '''INSERT INTO product (name,grade,code,category,viscosity,company_id)
+
+        sql = '''INSERT INTO product (name,grade,code,category,viscosity,company_id,comment)
                 values ((%s),(%s),(%s),(%s),(%s),
-                (select id from company where name = (%s))) on conflict do nothing returning 
-                id, name,grade,code,category,viscosity,(select c.name from company c where c.id=company_id),comment'''
+                (select id from company where name = (%s)),(%s)) on conflict do nothing returning id'''
 
         sql2 = ''' INSERT INTO msds(product_id, doc, last_check_date) values (
         (select id from product where code = (%s)), (%s), (%s)) on conflict do nothing
@@ -34,15 +32,17 @@ class DBInteraction:
 
         with Database('msds') as db:
             db.execute(sql, args_product)
+            pid = db.fetchone()
 
             if args_msds[-1] is not None:
                 db.execute(sql2, args_msds)
 
-            pid = db.fetchone()
             db.commit()
             if pid == 0:
                 return None
-        return pid
+            args_product = list(args_product)
+            args_product.insert(0, pid)
+        return tuple(args_product)
 
     @staticmethod
     def view_product():
@@ -89,22 +89,28 @@ class DBInteraction:
                       on c.id=p.company_id where c.name like  %(field)s;'''
             field = company
         with Database('msds') as db:
+            print(dict(field='%'+field+'%', art="st"))
             db.execute(sql, dict(field='%'+field+'%'))
             return db.fetchall()
 
     @staticmethod
-    def update_product(name='', grade='', code='', category='', viscosity='', company='', prev_code=''):
+    def update_product(name='', grade='', code='', category='', viscosity='', company='', comment='', prev_code=''):
         sql = '''update product set name=%s, grade=%s, code=%s, category=%s,
-            viscosity=%s, company_id=(select id from company where name=%s) where id =%s returning *'''
+            viscosity=%s, company_id=(select id from company where name=%s),comment=%s where id =%s returning *'''
+        sql_company_name = '''select name from company where id=%s'''
         if viscosity == '':
             viscosity = None
         else:
             viscosity = float(viscosity)
         with Database('msds') as db:
-            db.execute(sql, (name, grade, code, category, viscosity, company, prev_code))
+            db.execute(sql, (name, grade, code, category, viscosity, company, comment, prev_code))
             updated = db.fetchone()
+            db.execute(sql_company_name, (updated[-2],))
+            company_name = db.fetchone()
+            updated = list(updated)
+            updated[-2] = company_name
             db.commit()
-            return updated
+            return tuple(updated)
 
     @staticmethod
     def select_all_companies():
@@ -151,6 +157,20 @@ class DBInteraction:
             return db.fetchall()
 
     @staticmethod
+    def search_additives_by_product(product_code=""):
+        sql= '''SELECT a.* FROM additive AS a where (a.id) in (SELECT DISTINCT pc.additive_id 
+        from product_contains_substance as pc where pc.product_code = (%s)) ORDER BY a.name ASC'''
+        sql2 = ''' SELECT DISTINCT pc.additive, pc.additive_in_product FROM product_contains_substance pc where pc.product_code=(%s)
+        and (additive_id) in %s ORDER BY pc.additive ASC'''
+        with Database('msds') as db:
+            db.execute(sql, (product_code,))
+            additives = db.fetchall()
+            db.execute(sql2, (product_code, tuple([a[0] for a in additives])))
+            res = [a+(b[-1],) for a, b in zip(additives, db.fetchall())]
+            return res
+
+
+    @staticmethod
     def delete_additive(additive_name):
         sql = '''DELETE FROM additive WHERE name=(%s) RETURNING
         name,last_update_date,price,comment'''
@@ -161,7 +181,7 @@ class DBInteraction:
             return deleted
 
     @staticmethod
-    def search_additive(name='', last_update_date='', price='', comment=''):
+    def search_additive(name=None, last_update_date=None, price=None):
         if not last_update_date:
             last_update_date = (datetime.datetime.now()).strftime('%Y/%m/%d')
         else:
@@ -171,31 +191,14 @@ class DBInteraction:
                 '%Y/%m/%d')
         if not price:
             price = 0.0
+
         sql = '''SELECT * FROM additive a WHERE a.name like %(name)s escape '=' 
-                        and a.last_update_date < %(last_update_date)s
-                        OR a.price > %(price)s
-                        and  a.comment like %(comment)s escape '=' '''
+                        AND a.last_update_date < %(last_update_date)s
+                        AND a.price > %(price)s'''
 
         with Database('msds') as db:
-            db.execute(sql, dict(name='%' + name + '%', last_update_date=last_update_date, price=price, comment='%' + comment + '%'))
+            db.execute(sql, dict(name='%' + name + '%', last_update_date=last_update_date, price=price))
             return db.fetchall()
-        ''' Previous search look it up
-        sql = """SELECT * FROM additive a WHERE (a.name LIKE %s ESCAPE '')
-                or (a.last_update_date>%s)
-                or a.price=%s or (a.comment like %s escape '')"""
-
-        if price == '' or price == 'None':
-            price = None
-        else:
-            price = float(price)
-
-        if last_update_date == '' or last_update_date == 'None':
-            last_update_date = None
-
-        with Database('msds') as db:
-            db.execute(sql, (name, last_update_date, price, comment))
-            return db.fetchall()
-        '''
 
     @staticmethod
     def update_additive(last_update_date='', price='', comment='', prev_name=''):
@@ -252,6 +255,7 @@ class DBInteraction:
         added = set()
         with Database('msds') as db:
             for c in combo:
+                print(c)
                 db.execute(sql, c)
                 added.add(db.fetchone())
                 db.commit()
@@ -302,18 +306,6 @@ class DBInteraction:
             all_prods = db.fetchall()
             db.commit()
         return all_prods
-
-    @staticmethod
-    def sql_filter_additives(filter1=None, filter2=None, filter3=None):
-        with Database('msds') as db:
-            sql = '''SELECT * FROM additives
-                     WHERE filter1 = COALESCE(%s, filter1) 
-                       AND filter2 = COALESCE(%s, filter2) 
-                       AND filter3 = COALESCE(%s, filter3);
-                  '''
-            db.mogrify(sql, (filter1, filter2, filter3))
-            db.execute(sql, (filter1, filter2, filter3))
-            db.fetchall()
 
     @staticmethod
     def select_classification(productcode, additives=None):  # args = (additivecode,(substancescas))
@@ -372,18 +364,7 @@ class DBInteraction:
             db.execute(sql, (ghs_code,))
             return db.fetchall()
 
-
-if __name__ == '__main__':
-    additives = [('TEST1', ('619101-75-8', '439184-93-1', '361569-28-3')),
-                 ('TEST2', ('524373-68-2', '619101-75-8'))]
-    additives1 = [('TEST1', ('712393-16-0', '707208-37-4', '782704-52-3'), (12.4, 15.6, 12.3)),
-                  ('TEST2', ('536722-82-0', '332491-18-3'), (42.4, 25.6))]
-    dbi = DBInteraction()
-
-    #print(DBInteraction.filter_classification(prcode='O-MEK-4T-02-055B',filter_code='3'))
-    # select_classification('A-MEK-D-02-070',additives)
-    # select_classification('A-MEK-D-02-070')
-    # print(DBInteraction.view_data())
-    # print(DBInteraction.search_data(name='',grade='',code='TEST2',category='',viscosity='',company='tor oil'))
-    # print(dbi.select_all_companies())
-    # print(dbi.add_additive_substances(additives1))
+#test
+#geaega dageaa
+#990906-64-7,977263-57-1,51790-76-2,685237-59-2
+#12,14,11,15
