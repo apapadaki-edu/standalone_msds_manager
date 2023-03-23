@@ -60,7 +60,6 @@ class DBInteraction:
         with Database('msds') as db:
             db.execute(sql, (product_code,))
             deleted = db.fetchall()
-            print(deleted)
             db.commit()
             return deleted
 
@@ -143,7 +142,6 @@ class DBInteraction:
             new_adds.add(tuple([v if v != '' else None for v in a or ()]))
         with Database('msds') as db:
             for rec in list(new_adds):
-                print(rec)
                 db.execute(sql, rec)
                 add.add(db.fetchone())
                 db.commit()
@@ -160,7 +158,7 @@ class DBInteraction:
     def search_additives_by_product(product_code=""):
         sql= '''SELECT a.* FROM additive AS a where (a.id) in (SELECT DISTINCT pc.additive_id 
         from product_contains_substance as pc where pc.product_code = (%s)) ORDER BY a.name ASC'''
-        sql2 = ''' SELECT DISTINCT pc.additive, pc.additive_in_product FROM product_contains_substance pc where pc.product_code=(%s)
+        sql2 = '''SELECT DISTINCT pc.additive, pc.additive_in_product FROM product_contains_substance pc where pc.product_code=(%s)
         and (additive_id) in %s ORDER BY pc.additive ASC'''
         with Database('msds') as db:
             db.execute(sql, (product_code,))
@@ -222,13 +220,11 @@ class DBInteraction:
 
     @staticmethod
     def add_product_additives(product, additives, concentrations):
-        sql = ''' insert into contains_additive select p.id, ca.id, (%s)
-        from product p left join lateral (select a.id from additive a
-        where a.name = (%s)) ca on true where p.code = (%s) on conflict
-        do nothing returning *'''
+        sql = ''' insert into contains_additive values ((select p.id from product p where p.code = (%s)),
+            (SELECT a.id from additive a where a.name=(%s)), (%s)) on conflict do nothing returning *'''
         prod_add = set()
         for i in range(0, len(additives)):
-            prod_add.add((concentrations[i], additives[i], product))
+            prod_add.add((product, additives[i], concentrations[i]))
         added = set()
         with Database('msds') as db:
             for a in prod_add:
@@ -240,33 +236,36 @@ class DBInteraction:
     @staticmethod
     def add_additive_substances(additives):
         # where: additives=((additivei, tuple(substanesi),tuple(concentrationsi)),...)
-        sql = '''insert into contains_substance select a.id, cs.id, (%s)
-        from additive a left join lateral (select s.id from substance s
-        where s.cas = (%s)) cs on true where a.name = (%s) on conflict
-        do nothing returning *
+        sql = '''Insert into contains_substance values ((SELECT a.id from additive a where a.name = (%s)), 
+        (select s.id from substance s where s.cas = (%s)), (%s)) on conflict do nothing returning *
         '''
         combo = set()
         for i in range(0, len(additives)):
             subs = additives[i][1]
             cons = additives[i][2]
             for j in range(0, len(subs)):
-                addsub = (cons[j], subs[j], additives[i][0])
+                addsub = (additives[i][0], subs[j], cons[j])
                 combo.add(addsub)
+
         added = set()
         with Database('msds') as db:
             for c in combo:
-                print(c)
                 db.execute(sql, c)
                 added.add(db.fetchone())
                 db.commit()
         return added
 
     @staticmethod
-    def select_additive_classification(additive):
+    def select_additive_classification(additive, of_product=False):
         sql = '''select distinct pc.substance_cas, pc.substance_in_additive, c.scl,ghs.code 
         from product_contains_substance pc, classify c inner join ghs ghs on ghs.id=c.ghs_id 
         where pc.substance_id=c.substance_id and pc.additive= (%s) 
-        order by pc.substance_cas;
+        order by pc.substance_cas;'''
+        if not of_product:
+            sql = '''select s.cas, cs.quantity, c.scl, ghs.code from substance s inner join 
+            contains_substance cs on s.id=cs.substance_id inner join classify c 
+            on s.id=c.substance_id inner join ghs ghs on ghs.id = c.ghs_id 
+            where cs.additive_id = (select id from additive a where a.name= (%s));
             '''
         with Database('msds') as db:
             db.execute(sql, (additive,))
