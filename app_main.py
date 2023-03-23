@@ -554,16 +554,14 @@ class Page3(Page):
             clear_data()
             messagebox.showinfo("Added Successfully",
                                 pformat(dict_adds.get(n), indent=4, sort_dicts=False, ))
-            errmessage.configure(text=dict_adds.get(n), fg="Green")
 
 
         def add_data():
-            # 332491-18-3,536722-82-0   12.4, 45.6  712393-16-0    25.6
             all_additives = set()
             all_substances = set()
             additive = list()
             concentrations = list()
-             #geaeg dagea
+
             for k, v in dict_adds.items():
                 additive.append(k)
                 concentrations.append(v.get('concentration'))
@@ -575,26 +573,25 @@ class Page3(Page):
                 substance = (k, tuple(v.get('subs')), tuple(v.get('cons')))
                 all_substances.add(substance)
 
+            insertion_complete = True
             # add additive
             a_added = dbi.add_additive(list(all_additives))
             if a_added:
-                messagebox.showinfo("Added Successfully",
-                    pformat(a_added, indent=4, sort_dicts=False, ))
+                insertion_complete = insertion_complete and a_added
 
             # add additive substances
             s_added = dbi.add_additive_substances(tuple(all_substances))
-            if s_added:
-                messagebox.showinfo("Added Successfully",
-                    pformat(s_added, indent=4, sort_dicts=False, ))
+            insertion_complete = insertion_complete and s_added
 
             # add product additives
             additive_names = tuple(dict_adds.keys())
-            print(dict_adds)
             if len(pr_code.get())!=0:
                 pa_added = dbi.add_product_additives(pr_code.get(), additive_names, tuple(concentrations))
                 if pa_added:
-                    messagebox.showinfo("Added Successfully",
-                        pformat(pa_added, indent=4, sort_dicts=False, ))
+                    insertion_complete = insertion_complete and pa_added
+
+            if insertion_complete:
+                messagebox.showinfo('OK', 'Added Successfully')
             dict_adds.clear()
 
         def display_all_additives():
@@ -876,7 +873,7 @@ class Page4(Page):
 
         def display_additive_classification(self):
             clear_box(substance_list)
-            additives = dbi.select_additive_classification(additive.get())
+            additives = dbi.select_additive_classification(additive.get(), of_product=True)
             subs = set([(a[0], a[1]) for a in additives])
             if len(additive.get()) != 0:
                 counter = 0
@@ -887,7 +884,7 @@ class Page4(Page):
 
         def display_substance_classification(self):
             clear_box(substance_class_list)
-            additives = dbi.select_additive_classification(additive.get())
+            additives = dbi.select_additive_classification(additive.get(), of_product=True)
             if len(substance.get()) != 0:
                 classif = [(s[2], s[3]) for s in additives if s[0] == substance.get()]
                 clear_box(substance_class_list)
